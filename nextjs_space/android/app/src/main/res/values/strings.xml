@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Hello Bazaar</string>
+    <string name="title_activity_main">Hello Bazaar</string>
+    <string name="package_name">com.hellobazaar.shop</string>
+    <string name="custom_url_scheme">com.hellobazaar.shop</string>
+</resources>

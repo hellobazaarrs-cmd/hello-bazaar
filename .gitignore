@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+nextjs_space/node_modules/
+flutter_app/node_modules/
+flutter_app/.dart_tool/
+
+# Build outputs
+.next/
+nextjs_space/.next/
+build/
+dist/
+nextjs_space/dist/
+nextjs_space/desktop_src/dist/
+nextjs_space/desktop_src/node_modules/
+nextjs_space/android/app/build/
+flutter_app/build/
+.netlify/
+
+# Sensitive environment and key files
+.env
+.env.local
+nextjs_space/.env
+nextjs_space/.env.local
+serviceAccountKey.json
+nextjs_space/serviceAccountKey.json
+
+# Large packages & archives
+*.exe
+*.zip
+*.aab
+*.apk
+!nextjs_space/public/downloads/hello-bazaar-delivery-partner.apk
+
+# Logs & temp
+*.log
+scratch/
+nextjs_space/scratch/
+.DS_Store
+Thumbs.db
+.idea/
+*.iml
+.vscode/
+

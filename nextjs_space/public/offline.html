@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>You're Offline - Hello Bazaar</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #ffffff; color: #0f172a; min-height: 100vh; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 24px; text-align: center; }
+    .header { width: 100%; padding-top: 32px; }
+    .header h1 { font-size: 32px; font-weight: 900; color: #2B2349; }
+    .illustration { width: 100%; max-width: 320px; margin: auto; padding: 24px 0; display: flex; justify-content: center; }
+    .illustration svg { width: 100%; height: auto; }
+    .content { width: 100%; max-width: 380px; padding-bottom: 24px; }
+    .content h2 { font-size: 26px; font-weight: 800; color: #2B2349; margin-bottom: 12px; }
+    .content p { font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 24px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; padding: 16px; background-color: #222325; color: #ffffff; font-weight: 700; font-size: 16px; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .btn:active { transform: scale(0.98); background-color: #111213; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Ooops!</h1>
+  </div>
+
+  <div class="illustration">
+    <svg viewBox="0 0 400 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M -20 180 C 40 80, 100 80, 140 130 C 180 180, 220 180, 260 130 C 300 80, 360 80, 420 180" stroke="#D8CCF1" stroke-width="6" stroke-linecap="round" fill="none"/>
+      <ellipse cx="200" cy="275" rx="100" ry="18" fill="#323B44"/>
+      <path d="M 120 270 C 120 190, 160 170, 200 170 C 240 170, 280 190, 280 270 Z" fill="#066967"/>
+      <path d="M 185 170 Q 200 200 215 170" stroke="#044D4B" stroke-width="3" fill="none"/>
+      <path d="M 200 200 L 200 270" stroke="#044D4B" stroke-width="2.5"/>
+      <path d="M 188 150 L 212 150 L 212 175 L 188 175 Z" fill="#FCE5D8"/>
+      <path d="M 172 132 C 172 105, 228 105, 228 132 C 228 155, 172 155, 172 132 Z" fill="#FCE5D8"/>
+      <path d="M 188 128 Q 193 124 198 128" stroke="#2B2349" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M 210 128 Q 215 124 220 128" stroke="#2B2349" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <ellipse cx="212" cy="140" rx="4" ry="6" fill="#2B2349"/>
+      <path d="M 204 128 L 202 134 L 206 134" stroke="#E2B8A4" stroke-width="2" fill="none"/>
+      <path d="M 168 130 C 160 110, 180 90, 198 96 C 210 88, 235 94, 232 115 C 238 122, 230 138, 225 135 C 218 100, 180 105, 168 130 Z" fill="#222629"/>
+      <circle cx="172" cy="134" r="5" fill="#FCE5D8"/>
+      <circle cx="228" cy="134" r="5" fill="#FCE5D8"/>
+      <path d="M 135 200 L 75 140 L 95 120" stroke="#FCE5D8" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <g transform="translate(82, 100) rotate(-30)">
+        <rect x="0" y="10" width="34" height="24" rx="6" fill="#0A5C5A"/>
+        <rect x="8" y="-4" width="5" height="14" rx="2" fill="#222629"/>
+        <rect x="21" y="-4" width="5" height="14" rx="2" fill="#222629"/>
+      </g>
+      <path d="M 265 200 L 325 140 L 305 120" stroke="#FCE5D8" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <g transform="translate(270, 95) rotate(35)">
+        <rect x="0" y="10" width="34" height="24" rx="6" fill="#0A5C5A"/>
+        <circle cx="10" cy="10" r="3" fill="#D8CCF1"/>
+        <circle cx="24" cy="10" r="3" fill="#D8CCF1"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="content">
+    <h2>You'r offline</h2>
+    <p>Something went wrong.<br>Try refreshing the page or checking your internet connection.<br>We’ll see you in a moment!</p>
+    <button class="btn" onclick="window.location.reload()">Try again</button>
+  </div>
+</body>
+</html>

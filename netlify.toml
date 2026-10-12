@@ -1,0 +1,15 @@
+[build]
+  base = "nextjs_space"
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "18"
+  CI = "false"
+  NPM_FLAGS = "--prefer-offline"
+  NODE_OPTIONS = "--max_old_space_size=4096"
+  SECRETS_SCAN_OMIT_PATHS = ".next, .netlify, nextjs_space/.next, nextjs_space/.netlify, nextjs_space/serviceAccountKey.json, serviceAccountKey.json"
+  SECRETS_SCAN_OMIT_KEYS = "NEXTAUTH_URL, FIREBASE_PRIVATE_KEY"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

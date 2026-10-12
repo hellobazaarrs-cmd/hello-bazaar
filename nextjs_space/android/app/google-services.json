@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "83171304967",
+    "project_id": "gen-lang-client-0441410323",
+    "storage_bucket": "gen-lang-client-0441410323.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:83171304967:android:388aa434527e4d5a67aca2",
+        "android_client_info": {
+          "package_name": "com.hellobazaar.shop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "83171304967-4osj5g26nckiojbucek55oiifrvc8gk1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc3AfyN1pmWqBLgvoGL9-SefTQr0eLgIQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "83171304967-4osj5g26nckiojbucek55oiifrvc8gk1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:83171304967:android:388aa434527e4d5a67aca2",
+        "android_client_info": {
+          "package_name": "com.electrobazaars.shop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "83171304967-4osj5g26nckiojbucek55oiifrvc8gk1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc3AfyN1pmWqBLgvoGL9-SefTQr0eLgIQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "83171304967-4osj5g26nckiojbucek55oiifrvc8gk1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

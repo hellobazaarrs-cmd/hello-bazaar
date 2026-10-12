@@ -1,0 +1,40 @@
+{
+  "name": "hellobazaar",
+  "version": "1.0.0",
+  "description": "Hello Bazaar Desktop App",
+  "main": "main.js",
+  "author": "Hello Bazaar",
+  "scripts": {
+    "dist": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.hellobazaar.app",
+    "productName": "Hello Bazaar",
+    "win": {
+      "icon": "icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true,
+      "shortcutName": "Hello Bazaar"
+    },
+    "files": [
+      "main.js",
+      "icon.ico"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
+  }
+}

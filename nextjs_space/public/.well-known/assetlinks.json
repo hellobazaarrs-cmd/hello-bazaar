@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.electrobazaars.app",
+      "sha256_cert_fingerprints": [
+        "8C:1C:61:93:DF:95:17:71:1D:03:69:4E:C6:56:E8:75:71:A7:62:9C:75:61:30:36:51:1C:C7:8C:A4:A9:9D:06"
+      ]
+    }
+  }
+]

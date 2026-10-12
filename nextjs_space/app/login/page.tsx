@@ -64,10 +64,10 @@ function LoginForm() {
       <AuthShell title="Welcome Back" subtitle="Sign in to Hello Bazaar B2B Portal">
         <form onSubmit={onSubmit} className="space-y-4">
           <div className="space-y-2">
-            <label className="text-xs font-medium text-white/80 block">Email Address</label>
+            <label className="text-xs font-medium text-white/80 block">Email Address / Admin ID</label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
-              <input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" className="w-full h-11 rounded-lg bg-white/10 border border-white/20 pl-10 pr-3 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-sky-400 focus:bg-white/15 transition" />
+              <input type="text" autoCapitalize="none" autoCorrect="off" spellCheck={false} required value={email} onChange={e => setEmail(e.target.value)} placeholder="Email or hellobazaar.com" className="w-full h-11 rounded-lg bg-white/10 border border-white/20 pl-10 pr-3 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-sky-400 focus:bg-white/15 transition" />
             </div>
           </div>
           <div className="space-y-2">

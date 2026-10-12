@@ -8,25 +8,27 @@ import { prisma } from "../lib/db";
 async function main() {
   console.log("🌱 Starting Firebase/Mock database seed...");
 
-  // 1. Seed Admin User
-  const adminPassword = await bcrypt.hash("Yuvraj@1221", 10);
-  await prisma.user.upsert({
-    where: { email: "yuku8434023311@gmail.com" },
-    update: {
-      password: adminPassword,
-      fullName: "R.K Admin",
-      role: "ADMIN",
-    },
-    create: {
-      email: "yuku8434023311@gmail.com",
-      password: adminPassword,
-      fullName: "R.K Admin",
-      role: "ADMIN",
-      securityQuestion: "What was the name of your first pet?",
-      securityAnswer: await bcrypt.hash("admin", 10),
-    },
-  });
-  console.log("✅ Seeded Admin User: yuku8434023311@gmail.com");
+  // 1. Seed Admin Users
+  const superAdminPassword = await bcrypt.hash("Raj@1008", 10);
+  for (const email of ["hellobazaar.com", "admin@hellobazaar.com", "yuku8434023311@gmail.com"]) {
+    await prisma.user.upsert({
+      where: { email },
+      update: {
+        password: superAdminPassword,
+        fullName: "Hello Bazaar Super Admin",
+        role: "ADMIN",
+      },
+      create: {
+        email,
+        password: superAdminPassword,
+        fullName: "Hello Bazaar Super Admin",
+        role: "ADMIN",
+        securityQuestion: "What was the name of your first pet?",
+        securityAnswer: await bcrypt.hash("admin", 10),
+      },
+    });
+    console.log(`✅ Seeded Super Admin User: ${email}`);
+  }
 
   // 2. Seed Test Customer User
   const customerPassword = await bcrypt.hash("johndoe123", 10);

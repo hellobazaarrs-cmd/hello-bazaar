@@ -1,6 +1,28 @@
 {
   "users": [
     {
+      "id": "hellobazaar_super_admin",
+      "createdAt": "2026-10-12T15:00:00.000Z",
+      "updatedAt": "2026-10-12T15:00:00.000Z",
+      "email": "hellobazaar.com",
+      "password": "$2a$10$6idHrmFPAWyTHuX3T7z8KekSG7R0akQeOLGdaWmeHgEmhR1tKZYAS",
+      "fullName": "Hello Bazaar Super Admin",
+      "role": "ADMIN",
+      "securityQuestion": "What was the name of your first pet?",
+      "securityAnswer": "$2a$10$5tTqFDfCBOWdjZlZRU2xpOVAa5m.TuJ452CfxZvu2cIYJsefCiMg6"
+    },
+    {
+      "id": "hellobazaar_super_admin_alias",
+      "createdAt": "2026-10-12T15:00:00.000Z",
+      "updatedAt": "2026-10-12T15:00:00.000Z",
+      "email": "admin@hellobazaar.com",
+      "password": "$2a$10$6idHrmFPAWyTHuX3T7z8KekSG7R0akQeOLGdaWmeHgEmhR1tKZYAS",
+      "fullName": "Hello Bazaar Super Admin",
+      "role": "ADMIN",
+      "securityQuestion": "What was the name of your first pet?",
+      "securityAnswer": "$2a$10$5tTqFDfCBOWdjZlZRU2xpOVAa5m.TuJ452CfxZvu2cIYJsefCiMg6"
+    },
+    {
       "id": "6txqt649zs78y8e551zze4",
       "createdAt": "2026-06-02T05:14:19.895Z",
       "updatedAt": "2026-06-02T05:14:19.895Z",

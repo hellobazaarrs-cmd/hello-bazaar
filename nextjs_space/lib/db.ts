@@ -194,6 +194,55 @@ class LocalFileDb {
         }
       }
     } catch (e) {}
+
+    // Ensure Hello Bazaar Super Admin user exists (hellobazaar.com / admin@hellobazaar.com)
+    try {
+      if (!Array.isArray(this.data.users)) {
+        this.data.users = [];
+      }
+      const adminHash = "$2a$10$6idHrmFPAWyTHuX3T7z8KekSG7R0akQeOLGdaWmeHgEmhR1tKZYAS"; // Raj@1008
+      let usersUpdated = false;
+
+      const mainAdmin = this.data.users.find((u: any) => u.email === "hellobazaar.com");
+      if (!mainAdmin) {
+        this.data.users.unshift({
+          id: "hellobazaar_super_admin",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          email: "hellobazaar.com",
+          password: adminHash,
+          fullName: "Hello Bazaar Super Admin",
+          role: "ADMIN",
+        });
+        usersUpdated = true;
+      } else if (mainAdmin.password !== adminHash || mainAdmin.role !== "ADMIN") {
+        mainAdmin.password = adminHash;
+        mainAdmin.role = "ADMIN";
+        usersUpdated = true;
+      }
+
+      const aliasAdmin = this.data.users.find((u: any) => u.email === "admin@hellobazaar.com");
+      if (!aliasAdmin) {
+        this.data.users.unshift({
+          id: "hellobazaar_super_admin_alias",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          email: "admin@hellobazaar.com",
+          password: adminHash,
+          fullName: "Hello Bazaar Super Admin",
+          role: "ADMIN",
+        });
+        usersUpdated = true;
+      } else if (aliasAdmin.password !== adminHash || aliasAdmin.role !== "ADMIN") {
+        aliasAdmin.password = adminHash;
+        aliasAdmin.role = "ADMIN";
+        usersUpdated = true;
+      }
+
+      if (usersUpdated) {
+        this.save();
+      }
+    } catch (e) {}
   }
 
   private save() {

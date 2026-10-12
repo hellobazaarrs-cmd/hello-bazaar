@@ -52,9 +52,24 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email.toLowerCase() },
+        const inputId = credentials.email.trim().toLowerCase();
+
+        let user = await prisma.user.findUnique({
+          where: { email: inputId },
         });
+
+        // Also check alias if hellobazaar.com or admin@hellobazaar.com
+        if (!user && (inputId === "hellobazaar.com" || inputId === "admin@hellobazaar.com")) {
+          user = await prisma.user.findFirst({
+            where: {
+              OR: [
+                { email: "hellobazaar.com" },
+                { email: "admin@hellobazaar.com" },
+              ],
+            },
+          });
+        }
+
         if (!user) return null;
         const ok = await bcrypt.compare(credentials.password, user.password);
         if (!ok) return null;
@@ -96,7 +111,13 @@ export const authOptions: NextAuthOptions = {
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       try {
         const urlObj = new URL(url);
-        if (urlObj.hostname.includes("HelloBazaar") || urlObj.hostname.includes("eu.cc")) {
+        const host = urlObj.hostname.toLowerCase();
+        if (
+          host.includes("hellobazaar") ||
+          host.includes("eu.cc") ||
+          host.includes("vercel.app") ||
+          host === "localhost"
+        ) {
           return url;
         }
       } catch {}

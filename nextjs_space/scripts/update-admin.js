@@ -12,26 +12,34 @@ async function main() {
   const raw = fs.readFileSync(filePath, 'utf8');
   const data = JSON.parse(raw);
 
-  const adminEmail = 'yuku8434023311@gmail.com';
-  const adminPassword = 'Yuvraj@1221';
+  const adminEmail = 'hellobazaar.com';
+  const adminPassword = 'Raj@1008';
 
-  // Find admin user
-  const adminIndex = data.users.findIndex(u => u.email.toLowerCase() === adminEmail.toLowerCase());
-  if (adminIndex === -1) {
-    console.error('Admin user not found in firebase-mock.json');
-    return;
-  }
-
-  // Generate bcrypt hash
+  // Ensure super admin exists
   const salt = await bcrypt.genSalt(10);
   const hash = await bcrypt.hash(adminPassword, salt);
 
-  // Update password in mock database
-  data.users[adminIndex].password = hash;
-  data.users[adminIndex].role = 'ADMIN'; // Ensure role is ADMIN
+  const emailsToUpdate = ['hellobazaar.com', 'admin@hellobazaar.com', 'yuku8434023311@gmail.com'];
+  for (const em of emailsToUpdate) {
+    const idx = data.users.findIndex(u => u.email.toLowerCase() === em.toLowerCase());
+    if (idx !== -1) {
+      data.users[idx].password = hash;
+      data.users[idx].role = 'ADMIN';
+    } else {
+      data.users.push({
+        id: em.replace(/[^a-zA-Z0-9]/g, '_'),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        email: em,
+        password: hash,
+        fullName: 'Hello Bazaar Super Admin',
+        role: 'ADMIN',
+      });
+    }
+  }
 
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
-  console.log(`Successfully updated admin user: ${adminEmail} with hashed password for "${adminPassword}"`);
+  console.log(`Successfully updated admin users with password "${adminPassword}"`);
 }
 
 main().catch(err => {

@@ -42,20 +42,34 @@ try {
 
   if (!admin.apps.length) {
     if (projectId && clientEmail && privateKey) {
-      admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId,
-          clientEmail,
-          privateKey: privateKey.replace(/\\n/g, '\n'),
-        }),
-        storageBucket: process.env.FIREBASE_STORAGE_BUCKET || `${projectId}.appspot.com`,
-      });
-      console.log('🔥 Initialized Firebase Admin SDK successfully.');
+      try {
+        let cleanKey = privateKey.trim();
+        if (cleanKey.startsWith('"') && cleanKey.endsWith('"')) {
+          cleanKey = cleanKey.slice(1, -1);
+        }
+        cleanKey = cleanKey.replace(/\\n/g, '\n');
+
+        admin.initializeApp({
+          credential: admin.credential.cert({
+            projectId,
+            clientEmail,
+            privateKey: cleanKey,
+          }),
+          storageBucket: process.env.FIREBASE_STORAGE_BUCKET || `${projectId}.appspot.com`,
+        });
+        console.log('🔥 Initialized Firebase Admin SDK successfully.');
+      } catch (adminInitErr: any) {
+        console.warn('⚠️ Could not initialize Firebase Admin SDK:', adminInitErr.message || adminInitErr);
+      }
     } else if (process.env.FIRESTORE_EMULATOR_HOST) {
-      admin.initializeApp({
-        projectId: projectId || 'demo-project',
-      });
-      console.log('🔥 Initialized Firebase Admin SDK in Emulator Mode.');
+      try {
+        admin.initializeApp({
+          projectId: projectId || 'demo-project',
+        });
+        console.log('🔥 Initialized Firebase Admin SDK in Emulator Mode.');
+      } catch (emErr: any) {
+        console.warn('⚠️ Emulator init error:', emErr.message || emErr);
+      }
     } else {
       console.warn('⚠️ Firebase credentials not configured. Firebase features like Admin SDK might be unavailable.');
     }
@@ -63,13 +77,21 @@ try {
 
   if (admin.apps.length) {
     if (process.env.USE_FIRESTORE === 'true') {
-      firestore = admin.firestore();
-      useFirestore = true;
-      console.log('🔥 Connected to Firebase Firestore in the Cloud.');
+      try {
+        firestore = admin.firestore();
+        useFirestore = true;
+        console.log('🔥 Connected to Firebase Firestore in the Cloud.');
+      } catch (fErr: any) {
+        console.warn('⚠️ Cloud Firestore connection failed, using local database fallback:', fErr.message || fErr);
+      }
     } else if (process.env.FIRESTORE_EMULATOR_HOST) {
-      firestore = admin.firestore();
-      useFirestore = true;
-      console.log('🔥 Connected to local Firebase Firestore Emulator.');
+      try {
+        firestore = admin.firestore();
+        useFirestore = true;
+        console.log('🔥 Connected to local Firebase Firestore Emulator.');
+      } catch (eErr: any) {
+        console.warn('⚠️ Emulator connection failed:', eErr.message || eErr);
+      }
     } else {
       console.log('ℹ️ Firebase Firestore is disabled (USE_FIRESTORE is not set to "true"). Using local file database (firebase-mock.json).');
     }
@@ -78,89 +100,105 @@ try {
   console.warn('⚠️ Could not load firebase-admin or initialize:', err.message || err);
 }
 
-// Local file database fallback engine
+// Local file database fallback engine — fully Serverless & Vercel compatible
 class LocalFileDb {
-  private filePath: string;
+  private filePath: string = '';
   private data: Record<string, any[]> = {};
   private lastMtime = 0;
   private lastCheckTime = 0;
 
   constructor() {
-    const envPath = process.env.DATABASE_PATH;
-    if (envPath) {
-      this.filePath = path.resolve(envPath);
-    } else {
-      // By default, check if we are on cPanel/Linux/Production
-      // We look for typical indications of a hosting environment or production
-      const isProduction = process.env.NODE_ENV === 'production';
-      const isLinux = process.platform === 'linux';
-      
-      if (isProduction || isLinux) {
-        // Use a persistent directory outside public_html to prevent overwrite during deployment
+    const isVercel = process.env.VERCEL === '1' || !!process.env.AWS_LAMBDA_FUNCTION_NAME || !!process.env.NEXT_RUNTIME;
+    const localBundledPath = path.resolve(process.cwd(), 'firebase-mock.json');
+
+    if (process.env.DATABASE_PATH) {
+      this.filePath = path.resolve(process.env.DATABASE_PATH);
+    } else if (isVercel) {
+      // On Vercel Serverless Functions: /tmp is the only writable directory
+      const tmpPath = path.join(os.tmpdir(), 'firebase-mock.json');
+      try {
+        if (!fs.existsSync(tmpPath) && fs.existsSync(localBundledPath)) {
+          fs.copyFileSync(localBundledPath, tmpPath);
+        }
+      } catch (copyErr) {
+        console.warn('Could not copy to /tmp:', copyErr);
+      }
+      this.filePath = fs.existsSync(tmpPath) ? tmpPath : localBundledPath;
+      console.log(`☁️ Vercel Serverless database active at: ${this.filePath}`);
+    } else if (process.env.NODE_ENV === 'production' || process.platform === 'linux') {
+      try {
         const homeDir = os.homedir();
         const persistentDir = path.join(homeDir, 'hello_bazaar_data');
         const persistentPath = path.join(persistentDir, 'firebase-mock.json');
-        
-        // Ensure directory exists
         if (!fs.existsSync(persistentDir)) {
           fs.mkdirSync(persistentDir, { recursive: true });
         }
-        
-        // Auto-migration: if persistent file doesn't exist, check if local project file exists to copy/migrate it
-        if (!fs.existsSync(persistentPath)) {
-          const localPath = path.resolve(process.cwd(), 'firebase-mock.json');
-          if (fs.existsSync(localPath)) {
-            try {
-              fs.copyFileSync(localPath, persistentPath);
-              console.log(`🚚 Migrated existing database file from ${localPath} to ${persistentPath}`);
-            } catch (copyErr) {
-              console.warn('⚠️ Failed to migrate local database file:', copyErr);
-            }
-          }
+        if (!fs.existsSync(persistentPath) && fs.existsSync(localBundledPath)) {
+          fs.copyFileSync(localBundledPath, persistentPath);
         }
-        
         this.filePath = persistentPath;
         console.log(`📦 Using persistent local file database at: ${this.filePath}`);
-      } else {
-        // Local development: keep it in the project root
-        this.filePath = path.resolve(process.cwd(), 'firebase-mock.json');
-        console.log(`💻 Using development local file database at: ${this.filePath}`);
+      } catch (pErr) {
+        this.filePath = localBundledPath;
+        console.log(`💻 Fallback local database at: ${this.filePath}`);
       }
+    } else {
+      this.filePath = localBundledPath;
+      console.log(`💻 Using development local file database at: ${this.filePath}`);
     }
     this.load();
   }
 
   private load() {
-    if (fs.existsSync(this.filePath)) {
+    let loaded = false;
+    if (this.filePath && fs.existsSync(this.filePath)) {
       try {
         const stats = fs.statSync(this.filePath);
         this.lastMtime = stats.mtimeMs;
         this.lastCheckTime = Date.now();
         this.data = JSON.parse(fs.readFileSync(this.filePath, 'utf8'));
-        // Automatically make sure all existing products have isActive set to true if not defined
-        if (this.data && Array.isArray(this.data.products)) {
-          let updated = false;
-          this.data.products.forEach((p: any) => {
-            if (p.isActive === undefined) {
-              p.isActive = true;
-              updated = true;
-            }
-          });
-          if (updated) {
-            this.save();
-            console.log(`⚡ Auto-migrated ${this.data.products.length} products to ensure they have isActive: true`);
-          }
-        }
+        loaded = true;
       } catch (e) {
-        if (!this.data) this.data = {};
+        console.warn('⚠️ Error parsing local database at filePath:', e);
       }
-    } else {
+    }
+
+    if (!loaded) {
+      const fallbackPath = path.resolve(process.cwd(), 'firebase-mock.json');
+      if (fs.existsSync(fallbackPath)) {
+        try {
+          this.data = JSON.parse(fs.readFileSync(fallbackPath, 'utf8'));
+          loaded = true;
+        } catch (e) {
+          console.warn('⚠️ Error parsing fallback local database:', e);
+        }
+      }
+    }
+
+    if (!this.data || typeof this.data !== 'object') {
       this.data = {};
     }
+
+    // Automatically make sure all existing products have isActive set to true if not defined
+    try {
+      if (Array.isArray(this.data.products)) {
+        let updated = false;
+        this.data.products.forEach((p: any) => {
+          if (p && p.isActive === undefined) {
+            p.isActive = true;
+            updated = true;
+          }
+        });
+        if (updated) {
+          this.save();
+        }
+      }
+    } catch (e) {}
   }
 
   private save() {
     try {
+      if (!this.filePath) return;
       const dir = path.dirname(this.filePath);
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
@@ -170,10 +208,8 @@ class LocalFileDb {
         this.lastMtime = fs.statSync(this.filePath).mtimeMs;
       }
       this.lastCheckTime = Date.now();
-      console.log(`✅ Saved local file database to: ${this.filePath}`);
     } catch (e: any) {
-      console.error('❌ Error saving local file database:', e);
-      throw new Error(`Failed to write to local database file: ${e.message || e}`);
+      console.warn('⚠️ File persistence warning (in-memory state active):', e.message || e);
     }
   }
 
@@ -224,11 +260,13 @@ async function getCollectionDocs(collectionName: string): Promise<any[]> {
       });
     } catch (e) {
       console.error(`Firestore fetch error on ${collectionName}, falling back to local:`, e);
-      return localDb.getCollection(collectionName).map((item: any) => ({ ...item }));
+      const list = localDb.getCollection(collectionName);
+      return Array.isArray(list) ? list.map((item: any) => ({ ...item })) : [];
     }
   } else {
     // Return shallow copies so relational includes don't pollute the in-memory master collection
-    return localDb.getCollection(collectionName).map((item: any) => ({ ...item }));
+    const list = localDb.getCollection(collectionName);
+    return Array.isArray(list) ? list.map((item: any) => ({ ...item })) : [];
   }
 }
 

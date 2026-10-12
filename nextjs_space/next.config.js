@@ -5,10 +5,6 @@ const nextConfig = {
   swcMinify: true,
   reactStrictMode: false,
   productionBrowserSourceMaps: false,
-  experimental: {
-    workerThreads: false,
-    cpus: 2,
-  },
   eslint: {
     ignoreDuringBuilds: true,
   },
